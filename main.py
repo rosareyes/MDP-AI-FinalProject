@@ -56,6 +56,7 @@ def truncate(number, digits) -> float:
 
 
 def transition_tables_probability_counter(cardinal_directions):
+    directions_dictionary = {}
     """Function to calculate all the probabilities for the transition table"""
     print("Transition table for %s:\n" % cardinal_directions)
     # for every possible combination
@@ -75,19 +76,22 @@ def transition_tables_probability_counter(cardinal_directions):
             probability = rows.count([state[0] + cardinal_directions + state[1]]) / total_cases
         else:
             probability = 0
+        directions_dictionary[state[0] + cardinal_directions + state[1]] = str(truncate(probability, 6))
         print(state[0] + cardinal_directions + state[1] + ': ' + str(truncate(probability, 6)) + " ("
               + str(truncate(probability*100, 2)) + "%)")
         # e.g. output:
         # High;High;High;E;High;High;High: 0.616438 (61.64%)
+    return directions_dictionary
 
 
-# We define the directions and call the function for each of them.
+# We define the directions and call the function for each of them
 directions = ['E', 'N', 'W']
+# We save the data in dictionaries for each direction
+dictionaries = []
 
 for direction in directions:
-    transition_tables_probability_counter(direction)
+    dictionaries.append(transition_tables_probability_counter(direction))
 
-
-
-
-
+for dictionary in dictionaries:
+    print(dictionary)
+    print(len(dictionary))
