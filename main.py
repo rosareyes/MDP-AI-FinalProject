@@ -168,6 +168,20 @@ def calculate_cost_west(state, iteration, state_value_list):
     return Exp_cost_west
 
 
+def calculate_cost_directions(state, iteration, state_value_list, dictionary, cost=1):
+    #cost_west = 1
+    result_cost_west = 0
+    i = 0
+    for item in dictionary:
+        if state in item:
+            result_cost_west = result_cost_west + float(dictionary[item])*state_value_list[i][iteration-1]
+            i = i+1
+    Exp_cost_west = cost + result_cost_west
+    #print("Exp_cost_west", Exp_cost_west)
+    return Exp_cost_west
+
+
+
 state_value_list = [[0], [0], [0], [0], [0], [0], [0], [0]]
 
 #cost_for_east= calculate_cost_east('High;High;High;', 1, state_value_list)
@@ -177,9 +191,9 @@ state_value_list = [[0], [0], [0], [0], [0], [0], [0], [0]]
 
 
 def bellman_equations(state, iteration, state_value_list):
-    cost_E = calculate_cost_east(state, iteration, state_value_list)
-    cost_N = calculate_cost_north(state, iteration, state_value_list)
-    cost_W = calculate_cost_west(state, iteration, state_value_list)
+    cost_E = calculate_cost_directions(state, iteration, state_value_list, dictionaries[0])
+    cost_N = calculate_cost_directions(state, iteration, state_value_list, dictionaries[1])
+    cost_W = calculate_cost_directions(state, iteration, state_value_list, dictionaries[2])
 
     bellman_eq = round(min(cost_E, cost_W, cost_N),2)
     if state == 'High;High;High;':
@@ -210,13 +224,45 @@ def bellman_equations(state, iteration, state_value_list):
     return state_value_list
 
 # preguntar cuantos decimales tomar en cuenta
-for number in range(1,120):
+for number in range(1,3):
     #print("num", number)
     for state in list_1:
         bellman_equations(state, number, state_value_list)
 
 
-#print("RESULTADOOOOOOO", state_value_list)
-
 for elemento in state_value_list:
     print(elemento)
+
+optimal_policy_list = []
+
+for elemento in state_value_list:
+    optimal_policy_list.append(elemento[-1])
+print("optimal: ",optimal_policy_list)
+
+def optimal_policy(state ,optimal_policy_list,dictionary, cost=1):
+    #cost_west = 1
+    result_cost_west = 0
+    i = 0
+    for item in dictionary:
+        #print("item dic: ",item)
+        if state in item:
+
+            #print("float(dictionary[item])*optimal_policy_list[i]",float(dictionary[item])*optimal_policy_list[i])
+            result_cost_west = result_cost_west + float(dictionary[item])*optimal_policy_list[i]
+            #print("result_cost_west", result_cost_west)
+            i = i+1
+    #print("result_cost_west",result_cost_west)
+    Exp_cost_west = cost + result_cost_west
+    #print("Exp_cost_west", Exp_cost_west)
+    return Exp_cost_west
+
+
+def optimal_policy_calculation():
+    for state in list_1:
+        optimal_value_E = optimal_policy(state, optimal_policy_list, dictionaries[0])
+        optimal_value_N = optimal_policy(state, optimal_policy_list, dictionaries[1])
+        optimal_value_W = optimal_policy(state, optimal_policy_list, dictionaries[2])
+
+        print("THE OPTIMAL VALUE IS!!!!",optimal_value_E,optimal_value_N,optimal_value_W)
+
+optimal_policy_calculation()
