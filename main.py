@@ -92,6 +92,131 @@ dictionaries = []
 for direction in directions:
     dictionaries.append(transition_tables_probability_counter(direction))
 
-for dictionary in dictionaries:
-    print(dictionary)
-    print(len(dictionary))
+
+
+
+# we separate each dictionary into a different variable
+#dictionary_1 = dictionaries[0] # contains probabilities of table action E
+#dictionary_2 = dictionaries[1] # contains probabilities of table action N
+#dictionary_3 = dictionaries[2] # contains probabilities of table action W
+
+# We calculate the cost of action E in all the bellman equations for all 8 states
+
+# Calcular el ExpC_E (que se usara luego para calcular las bellman equations
+# result_cost_E = 0
+# i = 0
+# iteration = 1
+# state = 'High;High;High;'
+
+
+def calculate_cost_east(state, iteration, state_value_list):
+    cost_east = 1
+    result_cost_east = 0
+    i = 0
+    for item in dictionaries[0]:
+        if state in item:
+
+            #print("i", i)
+            result_cost_east = result_cost_east + float(dictionaries[0][item])*state_value_list[i][iteration-1]
+            #print("dictionaries[0][item]",dictionaries[0][item])
+
+            i = i+1
+    Exp_cost_east = cost_east + result_cost_east
+    #print("Exp_cost_east", Exp_cost_east )
+    # print("resultadooooo", Exp_cost_east)
+    return Exp_cost_east
+
+
+def calculate_cost_north(state, iteration, state_value_list):
+    cost_north = 1
+    result_cost_north = 0
+    i = 0
+    for item in dictionaries[1]:
+        if state in item:
+            #print("I AM IN NORTH")
+            #print("STATE", state)
+            #print("iteration", iteration)
+            #print("i", i)
+            result_cost_north = result_cost_north + float(dictionaries[1][item])*state_value_list[i][iteration-1]
+            #print("dictionaries[0][item]", dictionaries[1][item])
+            #print("state_value_list[i][iteration-1]", state_value_list[i][iteration - 1])
+            #print("result_cost_east ", result_cost_north)
+            i = i+1
+    Exp_cost_north = cost_north + result_cost_north
+    #print("Exp_cost_north", Exp_cost_north)
+    # print("resultadooooo", Exp_cost_north)
+    return Exp_cost_north
+
+
+def calculate_cost_west(state, iteration, state_value_list):
+    cost_west = 1
+    result_cost_west = 0
+    i = 0
+    for item in dictionaries[2]:
+        if state in item:
+            #print("I AM IN WEST")
+            #print("STATE", state)
+            #print("iteration", iteration)
+            #print("i", i)
+            result_cost_west = result_cost_west + float(dictionaries[2][item])*state_value_list[i][iteration-1]
+            #print("dictionaries[0][item]", dictionaries[2][item])
+            #print("state_value_list[i][iteration-1]", state_value_list[i][iteration - 1])
+            #print("result_cost_east ", result_cost_west)
+            i = i+1
+    Exp_cost_west = cost_west + result_cost_west
+    #print("Exp_cost_west", Exp_cost_west)
+    return Exp_cost_west
+
+
+state_value_list = [[0], [0], [0], [0], [0], [0], [0], [0]]
+
+#cost_for_east= calculate_cost_east('High;High;High;', 1, state_value_list)
+#cost_for_north = calculate_cost_north('High;High;High;', 1, state_value_list)
+#cost_for_west= calculate_cost_west('High;High;High;', 1, state_value_list)
+#bellman_eq_for_hhh= min(cost_for_west, cost_for_north, cost_for_east)
+
+
+def bellman_equations(state, iteration, state_value_list):
+    cost_E = calculate_cost_east(state, iteration, state_value_list)
+    cost_N = calculate_cost_north(state, iteration, state_value_list)
+    cost_W = calculate_cost_west(state, iteration, state_value_list)
+
+    bellman_eq = round(min(cost_E, cost_W, cost_N),2)
+    if state == 'High;High;High;':
+        state_value_list[0].append(bellman_eq)
+        #print("HE ENTRADO EN 1, resultado states_list", state_value_list)
+    elif state == 'High;High;Low;':
+        state_value_list[1].append(bellman_eq)
+        #print("HE ENTRADO EN 2, resultado states_list", state_value_list)
+    elif state == 'High;Low;High;':
+        state_value_list[2].append(bellman_eq)
+        #print("HE ENTRADO EN 3, resultado states_list", state_value_list)
+    elif state == 'High;Low;Low;':
+        state_value_list[3].append(bellman_eq)
+        #print("HE ENTRADO EN 4, resultado states_list",state_value_list)
+    elif state == 'Low;High;High;':
+        state_value_list[4].append(bellman_eq)
+        #print("HE ENTRADO EN 5, resultado states_list", state_value_list)
+    elif state == 'Low;High;Low;':
+        state_value_list[5].append(bellman_eq)
+        #print("HE ENTRADO EN 6, resultado states_list", state_value_list)
+    elif state == 'Low;Low;High;':
+        state_value_list[6].append(bellman_eq)
+        #print("HE ENTRADO EN 7, resultado states_list", state_value_list)
+    elif state == 'Low;Low;Low;':
+        state_value_list[7].append(bellman_eq)
+        #print("HE ENTRADO EN 8, resultado states_list", state_value_list)
+
+    return state_value_list
+
+# preguntar cuantos decimales tomar en cuenta
+for number in range(1,120):
+    #print("num", number)
+    for state in list_1:
+        bellman_equations(state, number, state_value_list)
+
+
+#print("RESULTADOOOOOOO", state_value_list)
+
+for elemento in state_value_list:
+    print(elemento)
