@@ -1,68 +1,29 @@
 import csv
 import itertools
-import math
-
-"""
-MARKOV DECISION PROCESS (MDP) - FINAL PROJECT
----------------------------------------------
-SUBJECT:        ARTIFICIAL INTELLIGENCE
-
-AUTHORS:        100434072 - ROSA REYES
-                100451104 - INES SANZ
-"""
-
-# First, we define the two lists with the combinations for the transition tables of our MDP
-list_1 = ['High;High;High;', 'High;High;Low;', 'High;Low;High;', 'High;Low;Low;', 'Low;High;High;',
-          'Low;High;Low;', 'Low;Low;High;', 'Low;Low;Low;']
-list_2 = [';High;High;High', ';High;High;Low', ';High;Low;High', ';High;Low;Low', ';Low;High;High',
-          ';Low;High;Low', ';Low;Low;High', ';Low;Low;Low']
-
-# Then, we do a cartesian product to obtain all the possible combinations
-all_states_combinations = list(itertools.product(list_1, list_2))
-
-print("<-----------MARKOV DECISION PROCESS MODEL------------>")
-print("States: N(High/Low), E(High/Low), W(High/Low)")
-print("Actions:")
-print("Turn_green_north()")
-print("Turn_green_east()")
-print("Turn_green_west()")
-print("All possible combinations for states:", all_states_combinations)  # len: 64 possible combinations
-# rows defined to save all the .csv data
-rows = []
-
-# reading the csv file
-with open('data/Data.csv', 'r') as csvfile:
-    # creating a csv reader object
-    csvreader = csv.reader(csvfile)
-
-    # extracting field names for first row
-    fields = next(csvreader)
-
-    # extracting each data row by row
-    for row in csvreader:
-        rows.append(row)
-
-    # get total number of rows
-    print("Total nr. of rows with header: %d" % csvreader.line_num)
-
-# printing the field names
-print('Field names are:\n' + ', '.join(field for field in fields))
 
 
-def truncate(number, digits) -> float:
-    """Helper function to truncate probabilities"""
-    stepper = 10.0 ** digits
-    return math.trunc(stepper * number) / stepper
+def bellman_equations(state, iteration, state_value_list):
+
+
+    costs_actions = []
+    for index, element in enumerate(dictionaries):
+        costs_actions.append(calculate_cost_directions(state, iteration, state_value_list, element,costs_for_actions[index]))
+
+    bellman_equation = round(min(costs_actions), 6)
+
+    for state_index, state_element in enumerate(initial_states_list):
+        if state == state_element:
+            state_value_list[state_index].append(bellman_equation)
+    return state_value_list
 
 
 def transition_tables_probability_counter(cardinal_directions):
-    directions_dictionary = {}
     """Function to calculate all the probabilities for the transition table"""
+    directions_dictionary = {}
     print("Transition table for %s:\n" % cardinal_directions)
     # for every possible combination
     for state in all_states_combinations:
         total_cases = 0
-
         # we iterate the rows with the data
         for r in rows:
             # for every row in our transition tables, we count all the occurrences
@@ -76,226 +37,183 @@ def transition_tables_probability_counter(cardinal_directions):
             probability = rows.count([state[0] + cardinal_directions + state[1]]) / total_cases
         else:
             probability = 0
-        directions_dictionary[state[0] + cardinal_directions + state[1]] = str(truncate(probability, 6))
-        print(state[0] + cardinal_directions + state[1] + ': ' + str(truncate(probability, 6)) + " ("
-              + str(truncate(probability*100, 2)) + "%)")
+        directions_dictionary[state[0] + cardinal_directions + state[1]] = str(round(probability, 6))
+        print(state[0] + cardinal_directions + state[1] + ': ' + str(round(probability, 6)) + " ("
+              + str(round(probability*100, 2)) + "%)")
         # e.g. output:
         # High;High;High;E;High;High;High: 0.616438 (61.64%)
     return directions_dictionary
 
 
-# We define the directions and call the function for each of them
+def calculate_cost_directions(state, iteration, state_value_list, dictionary, cost):
+    """Cal"""
+    result_cost = 0
+    i = 0
+    for item in dictionary:
+        if state in item:
+            result_cost = result_cost + float(dictionary[item])*state_value_list[i][iteration-1]
+            i = i+1
+    Exp_cost = cost + result_cost
+
+    return Exp_cost
+
+
+def optimal_policy_calculation(values_list):
+    for index,state in enumerate(values_list):
+        min_value = min(state)
+        min_index = state.index(min_value)
+
+        optimal_values_for_states.append(min(state))
+
+        if min_index == 0:
+            optimal_policy_result[initial_states_list[index]] = "E"
+            optimal_actions_for_states.append("E")
+        if min_index == 1:
+            optimal_policy_result[initial_states_list[index]] = "N"
+
+            optimal_actions_for_states.append("N")
+        if min_index == 2:
+            optimal_policy_result[initial_states_list[index]] = "W"
+
+            optimal_actions_for_states.append("W")
+
+
+def optimal_value_calculation():
+    for index,state in enumerate(initial_states_list):
+        optimal_value_E = optimal_policy(state, optimal_policy_list, dictionaries[0],costs_for_actions[0])
+        optimal_value_N = optimal_policy(state, optimal_policy_list, dictionaries[1],costs_for_actions[1])
+        optimal_value_W = optimal_policy(state, optimal_policy_list, dictionaries[2],costs_for_actions[2])
+        optimal_value_list.append([optimal_value_E,optimal_value_N,optimal_value_W])
+
+
+def optimal_policy(state ,optimal_policy_list,dictionary, cost):
+    result = 0
+    i = 0
+    for item in dictionary:
+        if state in item:
+
+            result = result + float(dictionary[item])*optimal_policy_list[i]
+
+            i = i+1
+
+    exp_cost = cost + result
+
+    return exp_cost
+
+
+"""
+MARKOV DECISION PROCESS (MDP) - FINAL PROJECT
+---------------------------------------------
+SUBJECT:        ARTIFICIAL INTELLIGENCE
+
+AUTHORS:        100434072 - ROSA REYES
+                100451104 - INES SANZ
+"""
+
+# First, we define the two lists with the combinations for the transition tables of our MDP
+initial_states_list = ['High;High;High;', 'High;High;Low;', 'High;Low;High;', 'High;Low;Low;', 'Low;High;High;',
+                       'Low;High;Low;', 'Low;Low;High;', 'Low;Low;Low;']
+final_states_list = [';High;High;High', ';High;High;Low', ';High;Low;High', ';High;Low;Low', ';Low;High;High',
+                     ';Low;High;Low', ';Low;Low;High', ';Low;Low;Low']
+
+# Then, we define the costs for every action.
+costs_for_actions = [20, 20, 20]
+
+# Then, we do a cartesian product to obtain all the possible combinations for the transition tables
+all_states_combinations = list(itertools.product(initial_states_list, final_states_list))
+
+print("<-----------MARKOV DECISION PROCESS MODEL------------>")
+print("States: N(High/Low), E(High/Low), W(High/Low)")
+print("Actions:")
+print("Turn_green_north()")
+print("Turn_green_east()")
+print("Turn_green_west()")
+print("All possible combinations for states:\n", all_states_combinations)  # len: 64 possible combinations
+
+# ##################################### READING FILES ######################################
+# rows defined to save all the .csv data
+rows = []
+# reading the csv file
+with open('data/Data.csv', 'r') as csvfile:
+    # creating a csv reader object
+    csvreader = csv.reader(csvfile)
+    # extracting field names for first row
+    fields = next(csvreader)
+    # extracting each data row by row
+    for row in csvreader:
+        rows.append(row)
+    # get total number of rows
+    print("Total nr. of rows of DATA with header: %d" % csvreader.line_num)
+
+# printing the field names
+print('Field names are:\n' + ', '.join(field for field in fields))
+
+# ##################################### READING FILES ######################################
+# We define the directions and call the transition table calculator function for each of them
 directions = ['E', 'N', 'W']
 # We save the data in dictionaries for each direction
 dictionaries = []
 
+# Creating a dictionary for every transition table
 for direction in directions:
     dictionaries.append(transition_tables_probability_counter(direction))
 
-
-
-
-# we separate each dictionary into a different variable
-#dictionary_1 = dictionaries[0] # contains probabilities of table action E
-#dictionary_2 = dictionaries[1] # contains probabilities of table action N
-#dictionary_3 = dictionaries[2] # contains probabilities of table action W
-
-# We calculate the cost of action E in all the bellman equations for all 8 states
-
-# Calcular el ExpC_E (que se usara luego para calcular las bellman equations
-# result_cost_E = 0
-# i = 0
-# iteration = 1
-# state = 'High;High;High;'
-
-
-def calculate_cost_east(state, iteration, state_value_list):
-    cost_east = 1
-    result_cost_east = 0
-    i = 0
-    for item in dictionaries[0]:
-        if state in item:
-
-            #print("i", i)
-            result_cost_east = result_cost_east + float(dictionaries[0][item])*state_value_list[i][iteration-1]
-            #print("dictionaries[0][item]",dictionaries[0][item])
-
-            i = i+1
-    Exp_cost_east = cost_east + result_cost_east
-    #print("Exp_cost_east", Exp_cost_east )
-    # print("resultadooooo", Exp_cost_east)
-    return Exp_cost_east
-
-
-def calculate_cost_north(state, iteration, state_value_list):
-    cost_north = 1
-    result_cost_north = 0
-    i = 0
-    for item in dictionaries[1]:
-        if state in item:
-            #print("I AM IN NORTH")
-            #print("STATE", state)
-            #print("iteration", iteration)
-            #print("i", i)
-            result_cost_north = result_cost_north + float(dictionaries[1][item])*state_value_list[i][iteration-1]
-            #print("dictionaries[0][item]", dictionaries[1][item])
-            #print("state_value_list[i][iteration-1]", state_value_list[i][iteration - 1])
-            #print("result_cost_east ", result_cost_north)
-            i = i+1
-    Exp_cost_north = cost_north + result_cost_north
-    #print("Exp_cost_north", Exp_cost_north)
-    # print("resultadooooo", Exp_cost_north)
-    return Exp_cost_north
-
-
-def calculate_cost_west(state, iteration, state_value_list):
-    cost_west = 1
-    result_cost_west = 0
-    i = 0
-    for item in dictionaries[2]:
-        if state in item:
-            #print("I AM IN WEST")
-            #print("STATE", state)
-            #print("iteration", iteration)
-            #print("i", i)
-            result_cost_west = result_cost_west + float(dictionaries[2][item])*state_value_list[i][iteration-1]
-            #print("dictionaries[0][item]", dictionaries[2][item])
-            #print("state_value_list[i][iteration-1]", state_value_list[i][iteration - 1])
-            #print("result_cost_east ", result_cost_west)
-            i = i+1
-    Exp_cost_west = cost_west + result_cost_west
-    #print("Exp_cost_west", Exp_cost_west)
-    return Exp_cost_west
-
-
-def calculate_cost_directions(state, iteration, state_value_list, dictionary, cost=1):
-    #cost_west = 1
-    result_cost_west = 0
-    i = 0
-    for item in dictionary:
-        if state in item:
-            result_cost_west = result_cost_west + float(dictionary[item])*state_value_list[i][iteration-1]
-            i = i+1
-    Exp_cost_west = cost + result_cost_west
-    #print("Exp_cost_west", Exp_cost_west)
-    return Exp_cost_west
-
-
-
+# We save the bellman eq´s result for every state
 state_value_list = [[0], [0], [0], [0], [0], [0], [0], [0]]
 
-#cost_for_east= calculate_cost_east('High;High;High;', 1, state_value_list)
-#cost_for_north = calculate_cost_north('High;High;High;', 1, state_value_list)
-#cost_for_west= calculate_cost_west('High;High;High;', 1, state_value_list)
-#bellman_eq_for_hhh= min(cost_for_west, cost_for_north, cost_for_east)
+# Flags for every state to save when the values are repeating in the bellman eqs
+repeated_flags_list = []
 
+# We initialize the flags to false
+for state in initial_states_list:
+    repeated_flags_list.append(False)
 
-def bellman_equations(state, iteration, state_value_list):
-    cost_E = calculate_cost_directions(state, iteration, state_value_list, dictionaries[0])
-    cost_N = calculate_cost_directions(state, iteration, state_value_list, dictionaries[1])
-    cost_W = calculate_cost_directions(state, iteration, state_value_list, dictionaries[2])
-
-    bellman_eq = truncate(min(cost_E, cost_W, cost_N),6)
-    if state == 'High;High;High;':
-        state_value_list[0].append(bellman_eq)
-        #print("HE ENTRADO EN 1, resultado states_list", state_value_list)
-    elif state == 'High;High;Low;':
-        state_value_list[1].append(bellman_eq)
-        #print("HE ENTRADO EN 2, resultado states_list", state_value_list)
-    elif state == 'High;Low;High;':
-        state_value_list[2].append(bellman_eq)
-        #print("HE ENTRADO EN 3, resultado states_list", state_value_list)
-    elif state == 'High;Low;Low;':
-        state_value_list[3].append(bellman_eq)
-        #print("HE ENTRADO EN 4, resultado states_list",state_value_list)
-    elif state == 'Low;High;High;':
-        state_value_list[4].append(bellman_eq)
-        #print("HE ENTRADO EN 5, resultado states_list", state_value_list)
-    elif state == 'Low;High;Low;':
-        state_value_list[5].append(bellman_eq)
-        #print("HE ENTRADO EN 6, resultado states_list", state_value_list)
-    elif state == 'Low;Low;High;':
-        state_value_list[6].append(bellman_eq)
-        #print("HE ENTRADO EN 7, resultado states_list", state_value_list)
-    elif state == 'Low;Low;Low;':
-        state_value_list[7].append(bellman_eq)
-        #print("HE ENTRADO EN 8, resultado states_list", state_value_list)
-
-    return state_value_list
-
-# preguntar cuantos decimales tomar en cuenta
-
-# hace el range del n al m sin incluir el m
-""""
-for number in range(1,549):
-    #print("num", number)
-
-    for state in list_1:
-        bellman_equations(state, number, state_value_list)
-"""
-# init the flags for every state
-for state in list_1:
-    repeated_numbers_flags.append(False)
-repeated_numbers_flags = []
 repeated_flag = False
-iteration_counter = 1
+# We define the iterations for the bellman equations
+iterations = 1
+
+# We start to calculate the bellman eqs. until all the values for all the states gets repeated
 while not repeated_flag:
-    for index, state in enumerate(list_1):
-        if state_value_list[iteration_counter] == state_value_list[iteration_counter-1]:
-            repeated_numbers_flags[index] = True
-    for state in list_1:
-        bellman_equations(state, iteration_counter, state_value_list)
-    iteration_counter= iteration_counter + 1
+    for state in initial_states_list:
+        bellman_equations(state, iterations, state_value_list)
+    for index, state in enumerate(initial_states_list):
 
-    all_true = True
-    for flag in repeated_numbers_flags:
-        if flag == False:
-            all_true = False
-    if all_true:
+        if state_value_list[index][iterations] == state_value_list[index][iterations-1]:
+            repeated_flags_list[index] = True
+
+    if False not in repeated_flags_list:
         repeated_flag = True
+    iterations = iterations + 1
 
+print("Last iteration", iterations)
 
-    print("interation_counter",iteration_counter)
-    print("repeated_numbers_flags",repeated_numbers_flags)
+# We print the bellman eqs
+print("Bellman equations:", iterations)
+for element in state_value_list:
+    print(element)
 
-
-
-
-
-for elemento in state_value_list:
-    print(len(elemento))
-    print(elemento)
-
+# List for saving the optimal policies
 optimal_policy_list = []
 
-for elemento in state_value_list:
-    optimal_policy_list.append(elemento[-1])
-print("optimal: ",optimal_policy_list)
+# We append the last elements for every state in the optimal policy list
+for element in state_value_list:
+    optimal_policy_list.append(element[-1])
 
-def optimal_policy(state ,optimal_policy_list,dictionary, cost=1):
-    #cost_west = 1
-    result_cost_west = 0
-    i = 0
-    for item in dictionary:
-        #print("item dic: ",item)
-        if state in item:
+optimal_value_list = []
 
-            #print("float(dictionary[item])*optimal_policy_list[i]",float(dictionary[item])*optimal_policy_list[i])
-            result_cost_west = result_cost_west + float(dictionary[item])*optimal_policy_list[i]
-            #print("result_cost_west", result_cost_west)
-            i = i+1
-    #print("result_cost_west",result_cost_west)
-    Exp_cost_west = cost + result_cost_west
-    #print("Exp_cost_west", Exp_cost_west)
-    return Exp_cost_west
+optimal_value_calculation()
+
+optimal_values_for_states = []
+optimal_actions_for_states = []
+optimal_policy_result = {}
+#print(optimal_value_list)
+#print("optimal_policy_calculation")
+optimal_policy_calculation(optimal_value_list)
+#print(optimal_values_for_states)
+#print(optimal_actions_for_states)
+
+print("Optimal Policy Final Results")
+print(optimal_policy_result)
 
 
-def optimal_policy_calculation():
-    for state in list_1:
-        optimal_value_E = optimal_policy(state, optimal_policy_list, dictionaries[0])
-        optimal_value_N = optimal_policy(state, optimal_policy_list, dictionaries[1])
-        optimal_value_W = optimal_policy(state, optimal_policy_list, dictionaries[2])
 
-        print("THE OPTIMAL VALUE IS!!!!",optimal_value_E,optimal_value_N,optimal_value_W)
-
-#optimal_policy_calculation()
