@@ -195,7 +195,7 @@ def bellman_equations(state, iteration, state_value_list):
     cost_N = calculate_cost_directions(state, iteration, state_value_list, dictionaries[1])
     cost_W = calculate_cost_directions(state, iteration, state_value_list, dictionaries[2])
 
-    bellman_eq = round(min(cost_E, cost_W, cost_N),2)
+    bellman_eq = truncate(min(cost_E, cost_W, cost_N),6)
     if state == 'High;High;High;':
         state_value_list[0].append(bellman_eq)
         #print("HE ENTRADO EN 1, resultado states_list", state_value_list)
@@ -224,13 +224,46 @@ def bellman_equations(state, iteration, state_value_list):
     return state_value_list
 
 # preguntar cuantos decimales tomar en cuenta
-for number in range(1,3):
+
+# hace el range del n al m sin incluir el m
+""""
+for number in range(1,549):
     #print("num", number)
+
     for state in list_1:
         bellman_equations(state, number, state_value_list)
+"""
+# init the flags for every state
+for state in list_1:
+    repeated_numbers_flags.append(False)
+repeated_numbers_flags = []
+repeated_flag = False
+iteration_counter = 1
+while not repeated_flag:
+    for index, state in enumerate(list_1):
+        if state_value_list[iteration_counter] == state_value_list[iteration_counter-1]:
+            repeated_numbers_flags[index] = True
+    for state in list_1:
+        bellman_equations(state, iteration_counter, state_value_list)
+    iteration_counter= iteration_counter + 1
+
+    all_true = True
+    for flag in repeated_numbers_flags:
+        if flag == False:
+            all_true = False
+    if all_true:
+        repeated_flag = True
+
+
+    print("interation_counter",iteration_counter)
+    print("repeated_numbers_flags",repeated_numbers_flags)
+
+
+
 
 
 for elemento in state_value_list:
+    print(len(elemento))
     print(elemento)
 
 optimal_policy_list = []
@@ -265,4 +298,4 @@ def optimal_policy_calculation():
 
         print("THE OPTIMAL VALUE IS!!!!",optimal_value_E,optimal_value_N,optimal_value_W)
 
-optimal_policy_calculation()
+#optimal_policy_calculation()
