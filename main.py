@@ -4,7 +4,6 @@ import itertools
 
 def bellman_equations(state, iteration, state_value_list):
 
-
     costs_actions = []
     for index, element in enumerate(dictionaries):
         costs_actions.append(calculate_cost_directions(state, iteration, state_value_list, element,costs_for_actions[index]))
@@ -40,6 +39,7 @@ def transition_tables_probability_counter(cardinal_directions):
         directions_dictionary[state[0] + cardinal_directions + state[1]] = str(round(probability, 6))
         print(state[0] + cardinal_directions + state[1] + ': ' + str(round(probability, 6)) + " ("
               + str(round(probability*100, 2)) + "%)")
+
         # e.g. output:
         # High;High;High;E;High;High;High: 0.616438 (61.64%)
     return directions_dictionary
@@ -177,7 +177,6 @@ while not repeated_flag:
     for state in initial_states_list:
         bellman_equations(state, iterations, state_value_list)
     for index, state in enumerate(initial_states_list):
-
         if state_value_list[index][iterations] == state_value_list[index][iterations-1]:
             repeated_flags_list[index] = True
 
@@ -185,7 +184,7 @@ while not repeated_flag:
         repeated_flag = True
     iterations = iterations + 1
 
-print("Last iteration", iterations)
+print("Last iteration:", iterations)
 
 # We print the bellman eqs
 print("Bellman equations:", iterations)
@@ -206,12 +205,12 @@ optimal_value_calculation()
 optimal_values_for_states = []
 optimal_actions_for_states = []
 optimal_policy_result = {}
-#print(optimal_value_list)
-#print("optimal_policy_calculation")
 optimal_policy_calculation(optimal_value_list)
-#print(optimal_values_for_states)
-#print(optimal_actions_for_states)
 
+print("Optimal Values:")
+for index, state in enumerate(initial_states_list):
+    print("For state: %s = %f" %(state, optimal_policy_list[index]))
+# print(optimal_policy_list)
 print("Optimal Policy Final Results")
 print(optimal_policy_result)
 
