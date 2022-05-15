@@ -1,3 +1,12 @@
+"""
+MARKOV DECISION PROCESS (MDP) - FINAL PROJECT
+---------------------------------------------
+SUBJECT:        ARTIFICIAL INTELLIGENCE
+
+AUTHORS:        100434072 - ROSA REYES
+                100451104 - INES SANZ
+"""
+
 import csv
 import itertools
 
@@ -101,14 +110,6 @@ def optimal_policy(state ,optimal_policy_list,dictionary, cost):
     return exp_cost
 
 
-"""
-MARKOV DECISION PROCESS (MDP) - FINAL PROJECT
----------------------------------------------
-SUBJECT:        ARTIFICIAL INTELLIGENCE
-
-AUTHORS:        100434072 - ROSA REYES
-                100451104 - INES SANZ
-"""
 
 # First, we define the two lists with the combinations for the transition tables of our MDP
 initial_states_list = ['High;High;High;', 'High;High;Low;', 'High;Low;High;', 'High;Low;Low;', 'Low;High;High;',
