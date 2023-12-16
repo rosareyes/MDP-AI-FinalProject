@@ -1,7 +1,7 @@
 # Markov Decision Process (MDP) - AI Final Project
 
 ## Overview
-This project models a Markov Decision Process (MDP) for optimizing traffic light controls. Developed for the Artificial Intelligence course at Universidad Carlos III de Madrid by Rosa Reyes and Ines Sanz.
+This project models a Markov Decision Process (MDP) for optimizing traffic light controls. Developed for the Artificial Intelligence course at Universidad Carlos III de Madrid.
 
 ## Features
 - **Bellman Equations**: Implementation of Bellman's equations to find the optimal policy for traffic light control.
