@@ -2,9 +2,6 @@
 MARKOV DECISION PROCESS (MDP) - FINAL PROJECT
 ---------------------------------------------
 SUBJECT:        ARTIFICIAL INTELLIGENCE
-
-AUTHORS:        100434072 - ROSA REYES
-                100451104 - INES SANZ
 """
 
 import csv
